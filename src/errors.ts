@@ -27,14 +27,14 @@ export class RateLimitError extends ZetrafiError {
   public readonly limit: number;
   public readonly remaining: number;
   public readonly reset: number;
-  public readonly type: 'standard' | 'user_action';
+  public readonly type: 'standard' | 'user_action' | 'comment_write' | 'restricted_write';
 
   constructor(
     message: string,
     limit: number,
     remaining: number,
     reset: number,
-    type: 'standard' | 'user_action' = 'standard'
+    type: 'standard' | 'user_action' | 'comment_write' | 'restricted_write' = 'standard'
   ) {
     super(message, 'RATE_LIMIT_EXCEEDED', 429, { limit, remaining, reset, type });
     this.name = 'RateLimitError';

@@ -33,13 +33,16 @@ export interface RateLimitInfo {
   limit: number;
   remaining: number;
   reset: number;
-  type: 'standard' | 'user_action';
+  type: 'standard' | 'user_action' | 'comment_write' | 'restricted_write';
 }
+
+export type AclType = 'app' | 'cloud' | 'user' | 'admin';
 
 export interface ApiKeyInfo {
   key: string;
   userId: string;
   permissions: string[];
+  aclType?: AclType;
   rateLimit: {
     standard: number;
     userAction: number;
@@ -53,6 +56,8 @@ export interface ApiKeyRequest {
   password: string;
   name?: string;
   permissions?: string[];
+  aclType?: AclType;
+  gameId?: string; // Required for 'cloud' ACL type
 }
 
 // Resource Types
@@ -171,6 +176,96 @@ export interface GameListParams extends ListParams {
   search?: string;
 }
 
+// Game Cloud
+export interface GameCloudDatabase {
+  gameId: string;
+  ownerUserId?: string | null;
+  meta?: Record<string, unknown> | null;
+  config?: Record<string, unknown> | null;
+  recordCount?: number;
+  createdAt: string;
+  updatedAt?: string | null;
+}
+
+export interface GameCloudRecord {
+  id: string;
+  gameId: string;
+  collection: string;
+  key: string;
+  data: Record<string, unknown>;
+  createdBy?: string | null;
+  updatedBy?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GameCloudRecordList {
+  items: GameCloudRecord[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface GameCloudRecordListParams {
+  collection?: string;
+  key?: string;
+  keyPrefix?: string;
+  limit?: number;
+  offset?: number;
+  orderBy?: 'created_at' | 'updated_at' | 'key';
+  order?: 'asc' | 'desc';
+}
+
+export type GameCloudFilterOperator =
+  | 'eq'
+  | 'neq'
+  | 'gt'
+  | 'gte'
+  | 'lt'
+  | 'lte'
+  | 'ilike'
+  | 'in'
+  | 'contains';
+
+export interface GameCloudQueryFilter {
+  field: string;
+  op: GameCloudFilterOperator;
+  value: string | number | boolean | Array<string | number | boolean> | Record<string, unknown>;
+}
+
+export interface GameCloudQueryRequest {
+  collection?: string;
+  filters?: GameCloudQueryFilter[];
+  limit?: number;
+  offset?: number;
+  orderBy?: 'created_at' | 'updated_at' | 'key';
+  order?: 'asc' | 'desc';
+}
+
+export interface GameCloudRecordUpsertRequest {
+  collection?: string;
+  key: string;
+  data: Record<string, unknown>;
+}
+
+export interface GameCloudFunctionInfo {
+  name: string;
+  description?: string | null;
+  readOnly: boolean;
+}
+
+export interface GameCloudFunctionResult<T = unknown> {
+  result: T;
+}
+
+export interface GameCloudUserPublic {
+  id: string;
+  displayName?: string | null;
+  nickname?: string | null;
+  level?: number | null;
+  avatar?: string | null;
+}
+
 // Write Actions (Rate Limited - 10/hour per IP)
 export interface CreatePostRequest {
   title: string;
@@ -192,4 +287,16 @@ export interface UpdatePostRequest {
   categoryId?: string;
   tags?: string[];
   thumbnailUrl?: string;
+}
+
+// ZUN Protocol Request/Response Types
+export interface ZunPostRequest {
+  title?: string;
+  content?: string;
+  tags?: string[];
+}
+
+export interface ZunCommentRequest {
+  text: string;
+  isSecret?: boolean;
 }
