@@ -1,0 +1,45 @@
+# Environment variables
+.env
+.env.*
+*.env
+
+# Secrets and credentials
+*.key
+*.pem
+*.p12
+*.p8
+secrets/
+credentials/
+*.secret
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
